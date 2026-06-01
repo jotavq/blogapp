@@ -1,0 +1,59 @@
+<div class="container py-5">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fs-4 fw-medium mb-1">Categorias</h2>
+      <p class="text-muted small mb-0">Gerencie as categorias do blog</p>
+    </div>
+    <a href="/admin/categorias/add" class="btn btn-success btn-sm">
+      <i class="bi bi-plus-circle me-1"></i>Nova categoria
+    </a>
+  </div>
+
+  <hr class="mb-4">
+
+  {{#each categorias}}
+  <div class="card border shadow-none rounded-3 mb-3">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-center justify-content-between">
+
+        <div class="d-flex align-items-center gap-3">
+          {{#if this.imagem}}
+            <img src="{{this.imagem}}" alt="{{this.nome}}" class="rounded-2" style="width:48px; height:48px; object-fit:cover;">
+          {{else}}
+            <div class="bg-secondary bg-opacity-10 rounded-2 d-flex align-items-center justify-content-center" style="width:48px; height:48px;">
+              <i class="bi bi-image text-secondary"></i>
+            </div>
+          {{/if}}
+          <div>
+            <h5 class="fw-medium mb-0">{{this.nome}}</h5>
+            <small class="text-muted">
+              <code>{{this.slug}}</code> · {{formatDate date}}
+            </small>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a href="/admin/categorias/edit/{{this._id}}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-pencil me-1"></i>Editar
+          </a>
+          <form action="/admin/categorias/deletar/{{this._id}}" method="POST" style="display:inline;">
+            <input type="hidden" name="id" value="{{this._id}}"/>
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash me-1"></i>Deletar
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-grid fs-1 d-block mb-3"></i>
+    <h5 class="fw-medium">Nenhuma categoria cadastrada</h5>
+    <p class="small mb-0">Clique em "Nova categoria" para começar.</p>
+  </div>
+  {{/each}}
+
+</div>

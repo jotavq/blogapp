@@ -1,0 +1,65 @@
+{{#each erros}}
+    <div class="alert alert-danger">{{texto}}</div>
+{{else}}
+
+{{/each}}
+
+<div class="card shadow-sm border-0 w-100" style="max-width: 440px; margin: auto;">
+
+  <div class="card-header bg-white border-bottom py-4 px-4">
+    <h4 class="fw-semibold mb-1">Crie sua conta</h4>
+    <p class="text-muted mb-0 small">Preencha os dados abaixo para se registrar</p>
+  </div>
+
+  <div class="card-body px-4 py-4">
+    <form action="" method="post">
+
+      <div class="mb-3">
+        <label for="nome" class="form-label text-muted small fw-semibold">Nome e sobrenome</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="bi bi-person text-muted"></i></span>
+          <input type="text" name="nome" id="nome" class="form-control border-start-0" placeholder="João da Silva" required>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label text-muted small fw-semibold">E-mail</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
+          <input type="email" name="email" id="email" class="form-control border-start-0" placeholder="joao@exemplo.com" required>
+        </div>
+      </div>
+
+      <hr class="my-3">
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-sm-6">
+          <label for="senha" class="form-label text-muted small fw-semibold">Senha</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-lock text-muted"></i></span>
+            <input type="password" name="senha" id="senha" class="form-control border-start-0" placeholder="••••••••" required>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6">
+          <label for="senha2" class="form-label text-muted small fw-semibold">Confirmar senha</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-lock-fill text-muted"></i></span>
+            <input type="password" name="senha2" id="senha2" class="form-control border-start-0" placeholder="••••••••" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="bi bi-person-plus me-2"></i>Registrar
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="card-footer bg-white border-top text-center py-3">
+    <small class="text-muted">Já tem uma conta? <a href="/usuario/login" class="text-decoration-none fw-semibold">Entrar</a></small>
+  </div>
+
+</div>

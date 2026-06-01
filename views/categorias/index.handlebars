@@ -1,0 +1,42 @@
+<div class="container py-5">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h2 class="fs-4 fw-medium mb-0">Categorias</h2>
+    <span class="text-muted small">{{categorias.length}} categorias</span>
+  </div>
+
+  <div class="row g-4">
+    {{#each categorias}}
+    <div class="col-md-6 col-lg-4">
+      <a href="/categorias/{{slug}}" class="text-decoration-none">
+        <div class="card border shadow-none rounded-3 overflow-hidden h-100">
+
+          <div style="height: 180px; overflow: hidden; background: #1a1a1a;">
+            {{#if imagem}}
+              <img src="{{imagem}}" alt="{{nome}}" class="w-100 h-100" style="object-fit: cover; opacity: 0.85;">
+            {{else}}
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark">
+                <i class="bi bi-image text-secondary" style="font-size: 2.5rem;"></i>
+              </div>
+            {{/if}}
+          </div>
+
+          <div class="card-body d-flex align-items-center justify-content-between p-3">
+            <h3 class="fs-6 fw-medium mb-0 text-dark">{{nome}}</h3>
+            <i class="bi bi-arrow-right text-muted"></i>
+          </div>
+
+        </div>
+      </a>
+    </div>
+    {{else}}
+    <div class="col-12">
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-grid fs-1 d-block mb-3"></i>
+        <h5 class="fw-medium">Nenhuma categoria encontrada</h5>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+</div>

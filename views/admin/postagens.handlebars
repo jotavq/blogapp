@@ -1,0 +1,54 @@
+<div class="container py-5">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fs-4 fw-medium mb-1">Postagens</h2>
+      <p class="text-muted small mb-0">Gerencie as postagens do blog</p>
+    </div>
+    <a href="/admin/postagens/add" class="btn btn-success btn-sm">
+      <i class="bi bi-plus-circle me-1"></i>Nova postagem
+    </a>
+  </div>
+
+  <hr class="mb-4">
+
+  {{#each postagens}}
+  <div class="card border shadow-none rounded-3 mb-3">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-center justify-content-between">
+
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h5 class="fw-medium mb-0">{{this.titulo}}</h5>
+            <span class="badge bg-dark rounded-pill">{{this.categoria.nome}}</span>
+          </div>
+          <p class="text-muted small mb-1">{{this.descricao}}</p>
+          <small class="text-muted">
+            <i class="bi bi-calendar3 me-1"></i>{{formatDate date}}
+          </small>
+        </div>
+
+        <div class="d-flex gap-2 ms-3">
+          <a href="/admin/postagens/edit/{{this._id}}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-pencil me-1"></i>Editar
+          </a>
+          <form action="/admin/postagens/deletar/{{this._id}}" method="POST" style="display:inline;">
+            <input type="hidden" name="id" value="{{this._id}}"/>
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash me-1"></i>Deletar
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-journal-x fs-1 d-block mb-3"></i>
+    <h5 class="fw-medium">Nenhuma postagem cadastrada</h5>
+    <p class="small mb-0">Clique em "Nova postagem" para começar.</p>
+  </div>
+  {{/each}}
+
+</div>

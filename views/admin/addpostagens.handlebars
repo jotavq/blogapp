@@ -1,0 +1,67 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h2 class="fs-4 fw-medium mb-1">Nova postagem</h2>
+          <p class="text-muted small mb-0">Preencha os dados abaixo</p>
+        </div>
+        <a href="/admin/postagens" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+      </div>
+
+      {{#each erros}}
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 small" role="alert">
+          <i class="bi bi-exclamation-circle"></i> {{texto}}
+        </div>
+      {{/each}}
+
+      <div class="card border shadow-none rounded-3">
+        <div class="card-body p-4">
+          <form action="/admin/postagens/nova" method="POST">
+
+            <div class="mb-3">
+              <label for="titulo" class="form-label small fw-medium text-secondary">Título</label>
+              <input type="text" id="titulo" name="titulo" placeholder="Título da postagem" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="slug" class="form-label small fw-medium text-secondary">Slug</label>
+              <input type="text" id="slug" name="slug" placeholder="slug-da-postagem" class="form-control" required>
+              <small class="text-muted">Usado na URL. Ex: <code>minha-postagem</code></small>
+            </div>
+
+            <div class="mb-3">
+              <label for="descricao" class="form-label small fw-medium text-secondary">Descrição</label>
+              <input type="text" id="descricao" name="descricao" placeholder="Breve descrição da postagem" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="categoria" class="form-label small fw-medium text-secondary">Categoria</label>
+              <select id="categoria" name="categoria" class="form-select">
+                {{#each categorias}}
+                  <option value="{{this._id}}">{{nome}}</option>
+                {{else}}
+                  <option value="0">Nenhuma categoria registrada</option>
+                {{/each}}
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label for="conteudo" class="form-label small fw-medium text-secondary">Conteúdo</label>
+              <textarea id="conteudo" name="conteudo" class="form-control" rows="12" placeholder="Escreva o conteúdo da postagem aqui..."></textarea>
+            </div>
+
+            <button class="btn btn-success w-100" type="submit">
+              <i class="bi bi-plus-circle me-2"></i>Criar postagem
+            </button>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

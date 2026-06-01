@@ -1,0 +1,59 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h2 class="fs-4 fw-medium mb-1">Editar categoria</h2>
+          <p class="text-muted small mb-0">Atualize os dados abaixo</p>
+        </div>
+        <a href="/admin/categorias" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i>Voltar
+        </a>
+      </div>
+
+      {{#each erros}}
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 small" role="alert">
+          <i class="bi bi-exclamation-circle"></i> {{texto}}
+        </div>
+      {{/each}}
+
+      <div class="card border shadow-none rounded-3">
+        <div class="card-body p-4">
+          <form action="/admin/categorias/edit" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{categoria._id}}"/>
+            <input type="hidden" name="imagemAtual" value="{{categoria.imagem}}"/>
+
+            <div class="mb-3">
+              <label for="nome" class="form-label small fw-medium text-secondary">Nome</label>
+              <input type="text" id="nome" name="nome" placeholder="Nome da categoria" class="form-control" value="{{categoria.nome}}"/>
+            </div>
+
+            <div class="mb-3">
+              <label for="slug" class="form-label small fw-medium text-secondary">Slug</label>
+              <input type="text" id="slug" name="slug" placeholder="slug-da-categoria" class="form-control" value="{{categoria.slug}}"/>
+              <small class="text-muted">Usado na URL. Ex: <code>tecnologia</code></small>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-medium text-secondary">Imagem</label>
+              {{#if categoria.imagem}}
+                <div class="mb-2">
+                  <img src="{{categoria.imagem}}" alt="{{categoria.nome}}" class="rounded-2" style="height:80px; object-fit:cover;">
+                </div>
+              {{/if}}
+              <input type="file" class="form-control" name="imagem" accept="image/*">
+              <small class="text-muted">JPG, PNG ou WEBP. Deixe vazio para manter a imagem atual.</small>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">
+              <i class="bi bi-check-circle me-2"></i>Salvar alterações
+            </button>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

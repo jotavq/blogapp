@@ -1,0 +1,82 @@
+<div class="container py-5">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="fs-4 fw-medium mb-1">Painel administrativo</h2>
+      <p class="text-muted small mb-0">Gerencie o conteúdo do seu blog</p>
+    </div>
+    <a href="/" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Voltar ao site
+    </a>
+  </div>
+
+  <hr class="mb-4">
+
+  <!-- Contadores -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card border shadow-none rounded-3 bg-primary bg-opacity-10">
+        <div class="card-body p-4 d-flex align-items-center gap-3">
+          <div class="bg-primary bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center" style="width:48px; height:48px;">
+            <i class="bi bi-journal-text text-primary fs-5"></i>
+          </div>
+          <div>
+            <p class="text-muted small mb-0">Total de postagens</p>
+            <h3 class="fw-medium mb-0">{{totalPostagens}}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card border shadow-none rounded-3 bg-success bg-opacity-10">
+        <div class="card-body p-4 d-flex align-items-center gap-3">
+          <div class="bg-success bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center" style="width:48px; height:48px;">
+            <i class="bi bi-grid text-success fs-5"></i>
+          </div>
+          <div>
+            <p class="text-muted small mb-0">Total de categorias</p>
+            <h3 class="fw-medium mb-0">{{totalCategorias}}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de navegação -->
+  <div class="row g-3">
+
+    <div class="col-md-6">
+      <a href="/admin/postagens" class="text-decoration-none">
+        <div class="card border shadow-none rounded-3 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="bg-primary bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center" style="width:44px; height:44px;">
+                <i class="bi bi-journal-text text-primary fs-5"></i>
+              </div>
+              <h5 class="card-title fw-medium mb-0">Postagens</h5>
+            </div>
+            <p class="card-text text-muted small mb-0">Gerencie as postagens do blog.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-6">
+      <a href="/admin/categorias" class="text-decoration-none">
+        <div class="card border shadow-none rounded-3 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="bg-success bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center" style="width:44px; height:44px;">
+                <i class="bi bi-grid text-success fs-5"></i>
+              </div>
+              <h5 class="card-title fw-medium mb-0">Categorias</h5>
+            </div>
+            <p class="card-text text-muted small mb-0">Gerencie as categorias do blog.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</div>
