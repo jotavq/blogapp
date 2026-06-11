@@ -104,6 +104,14 @@ Acesse `http://localhost:8081`
 | `MONGO_URI` | URI de conexão com o MongoDB |
 | `PORT` | Porta do servidor (padrão: 8081) |
 
+## Demonstração GIFs
+
+### Login
+![Login](./assets/gifs/Login.gif)
+
+### Painel Administrativo
+![Painel](./assets/gifs/Painel.gif)
+
 ## 👤 Autor
 
 Desenvolvido por **João Victor**
