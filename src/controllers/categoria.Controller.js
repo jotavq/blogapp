@@ -1,14 +1,9 @@
 import mongoose from "mongoose";
-import "../models/Categoria.js";
-import "../models/Postagem.js";
+import * as categoriaService from "../services/categoria.service.js";
 
-const Categoria = mongoose.model("categorias");
-const Postagem = mongoose.model("postagens");
-
-// Listar Categorias Admin
 export const listarCategorias = async (req, res) => {
   try {
-    const categorias = await Categoria.find().sort({ date: -1 }).lean();
+    const categorias = await categoriaService.listarTodas();
     res.render("admin/categorias", { categorias });
   } catch (err) {
     req.flash("error_msg", "Houve um erro ao listar as categorias");
@@ -16,10 +11,9 @@ export const listarCategorias = async (req, res) => {
   }
 };
 
-// Listar Categorias Publica
 export const listarCategoriasPublica = async (req, res) => {
   try {
-    const categorias = await Categoria.find().sort({ date: -1 }).lean();
+    const categorias = await categoriaService.listarTodas();
     res.render("categorias/index", { categorias });
   } catch (err) {
     req.flash("error_msg", "Erro ao listar categorias");
@@ -27,33 +21,21 @@ export const listarCategoriasPublica = async (req, res) => {
   }
 };
 
-// Formulario de Nova Categoria
 export const novaCategoria = (req, res) => {
   res.render("admin/addcategorias");
 };
 
-//Criar Categoria
 export const criarCategoria = async (req, res) => {
   try {
     const nome = req.body.nome?.trim();
     const slug = req.body.slug?.trim().toLowerCase().replace(/\s+/g, "-");
     const imagem = req.file ? `/img/upload/${req.file.filename}` : "";
 
-    let erros = [];
-    if (!nome) erros.push({ texto: "Nome inválido" });
-    if (!slug) erros.push({ texto: "Slug inválido" });
-    if (nome && nome.length < 3) erros.push({ texto: "Nome muito pequeno" });
-
-    if (erros.length > 0)
-      return res.render("admin/addcategorias", { erros: erros });
-
-    const slugExiste = await Categoria.findOne({ slug });
-    if (slugExiste) {
-      erros.push({ texto: "Já existe uma categoria com esse slug" });
-      return res.render("admin/addcategorias", { erros });
+    const resultado = await categoriaService.criar({ nome, slug, imagem });
+    if (resultado.erros) {
+      return res.render("admin/addcategorias", { erros: resultado.erros });
     }
 
-    await new Categoria({ nome, slug, imagem }).save();
     req.flash("success_msg", "Categoria criada com sucesso!");
     res.redirect("/admin/categorias");
   } catch (err) {
@@ -66,7 +48,6 @@ export const criarCategoria = async (req, res) => {
   }
 };
 
-// Formulario de Editar Categoria
 export const formEditar = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -74,7 +55,7 @@ export const formEditar = async (req, res) => {
       return res.redirect("/admin/categorias");
     }
 
-    const categoria = await Categoria.findOne({ _id: req.params.id }).lean();
+    const categoria = await categoriaService.buscarPorId(req.params.id);
     res.render("admin/editcategorias", { categoria });
   } catch (err) {
     req.flash("error_msg", "Essa categoria não existe");
@@ -82,7 +63,6 @@ export const formEditar = async (req, res) => {
   }
 };
 
-// Editar Categoria
 export const editarCategoria = async (req, res) => {
   try {
     const id = req.body.id;
@@ -92,27 +72,18 @@ export const editarCategoria = async (req, res) => {
       ? `/img/upload/${req.file.filename}`
       : req.body.imagemAtual;
 
-    let erros = [];
-    if (!nome) erros.push({ texto: "Nome inválido" });
-    if (!slug) erros.push({ texto: "Slug inválido" });
-    if (nome && nome.length < 3) erros.push({ texto: "Nome muito pequeno" });
-
-    if (erros.length > 0)
+    const resultado = await categoriaService.atualizar(id, {
+      nome,
+      slug,
+      imagem,
+    });
+    if (resultado.erros) {
       return res.render("admin/editcategorias", {
-        erros: erros,
-        categoria: { _id: id, nome, slug },
-      });
-
-    const slugExiste = await Categoria.findOne({ slug, _id: { $ne: id } });
-    if (slugExiste) {
-      erros.push({ texto: "Já existe uma categoria com esse slug" });
-      return res.render("admin/editcategorias", {
-        erros,
+        erros: resultado.erros,
         categoria: { _id: id, nome, slug },
       });
     }
 
-    await Categoria.findOneAndUpdate({ _id: id }, { nome, slug, imagem });
     req.flash("success_msg", "Categoria editada com sucesso!");
     res.redirect("/admin/categorias");
   } catch (err) {
@@ -125,7 +96,6 @@ export const editarCategoria = async (req, res) => {
   }
 };
 
-// Deletar Categoria
 export const deletarCategoria = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -133,7 +103,7 @@ export const deletarCategoria = async (req, res) => {
       return res.redirect("/admin/categorias");
     }
 
-    await Categoria.deleteOne({ _id: req.params.id });
+    await categoriaService.deletar(req.params.id);
     req.flash("success_msg", "Categoria deletada com sucesso!");
     res.redirect("/admin/categorias");
   } catch (err) {
@@ -146,18 +116,18 @@ export const deletarCategoria = async (req, res) => {
   }
 };
 
-// Buscar Categorias
-
 export const buscarCategorias = async (req, res) => {
   try {
-    const categoria = await Categoria.findOne({ slug: req.params.slug }).lean();
+    const resultado = await categoriaService.buscarPorSlugComPostagens(
+      req.params.slug,
+    );
 
-    if (!categoria) {
+    if (!resultado) {
       req.flash("error_msg", "Esta categoria não existe.");
       return res.redirect("/");
     }
 
-    const postagens = await Postagem.find({ categoria: categoria._id }).lean();
+    const { categoria, postagens } = resultado;
     return res.render("categorias/postagens", { postagens, categoria });
   } catch (err) {
     req.flash(

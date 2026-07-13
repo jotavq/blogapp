@@ -1,5 +1,3 @@
-// carregando modulos
-
 import express from "express";
 import "dotenv/config";
 import helmet from "helmet";
@@ -10,27 +8,22 @@ import usuario from "./routes/usuario.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
-import { conectarDB } from "./config/db.js";
 import session from "express-session";
 import flash from "connect-flash";
 import passport from "./config/auth.js";
 
 const app = express();
-const PORT = process.env.PORT || 8081;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const Categoria = mongoose.model("categorias");
 
 // configurações
-
 app.use(helmet());
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-//sessão
-
+// sessão
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -41,11 +34,9 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use(flash());
 
 // Middleware
-
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash("success_msg");
   res.locals.error_msg = req.flash("error_msg");
@@ -64,7 +55,6 @@ app.use(async (req, res, next) => {
 });
 
 // Handlebars
-
 app.engine(
   "handlebars",
   engine({
@@ -90,28 +80,14 @@ app.engine(
   }),
 );
 app.set("view engine", "handlebars");
+app.set("views", path.join(__dirname, "..", "views"));
 
-//public
-
-app.use(express.static(path.join(__dirname, "public")));
+// public
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 // rotas
-
 app.use("/", index);
 app.use("/admin", admin);
 app.use("/usuario", usuario);
 
-// start do servidor 
-async function start() {
-  try {
-    await conectarDB();
-
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando na porta ${PORT}`);
-    });
-  } catch (err) {
-    console.error("Erro ao conectar no MongoDB:", err);
-    process.exit(1);
-  }
-}
-start();
+export default app;

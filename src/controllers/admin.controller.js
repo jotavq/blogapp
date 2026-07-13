@@ -1,14 +1,10 @@
-import mongoose from "mongoose";
-import "../models/Postagem.js";
-import "../models/Categoria.js";
-
-const Postagem = mongoose.model("postagens");
-const Categoria = mongoose.model("categorias");
+import * as postagensService from "../services/postagens.service.js";
+import * as categoriaService from "../services/categoria.service.js";
 
 export const adminHome = async (req, res) => {
   try {
-    const totalPostagens = await Postagem.countDocuments();
-    const totalCategorias = await Categoria.countDocuments();
+    const totalPostagens = await postagensService.contarTodas();
+    const totalCategorias = await categoriaService.contarTodas();
     res.render("admin/index", { totalPostagens, totalCategorias });
   } catch (err) {
     req.flash("error_msg", "Erro ao carregar o painel");
@@ -18,10 +14,7 @@ export const adminHome = async (req, res) => {
 
 export const home = async (req, res) => {
   try {
-    const postagens = await Postagem.find()
-      .populate("categoria")
-      .sort({ date: -1 })
-      .lean();
+    const postagens = await postagensService.listarRecentes();
     res.render("index", { postagens });
   } catch (err) {
     console.log(err);

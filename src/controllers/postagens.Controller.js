@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
-import "../models/Postagem.js";
+import * as postagensService from "../services/postagens.service.js";
 import "../models/Categoria.js";
 
-const Postagem = mongoose.model("postagens");
 const Categoria = mongoose.model("categorias");
 
 export const formPostagens = async (req, res) => {
   try {
-    const postagens = await Postagem.find().populate("categoria").lean();
+    const postagens = await postagensService.listarTodas();
     res.render("admin/postagens", { postagens });
   } catch (err) {
     req.flash("error_msg", "Houve um erro ao listar as postagens");
@@ -35,26 +34,22 @@ export const newPostagem = async (req, res) => {
     const conteudo = req.body.conteudo?.trim();
     const categoria = req.body.categoria;
 
-    let erros = [];
-    if (!titulo) erros.push({ texto: "Titulo Inválido" });
-    if (!slug) erros.push({ texto: "Slug Inválido" });
-    if (!descricao) erros.push({ texto: "Descrição Inválida" });
-    if (!conteudo) erros.push({ texto: "Conteudo Inválido" });
-    if (!categoria || categoria === "0")
-      erros.push({ texto: "Categoria Inválida, registre  uma categoria" });
+    const resultado = await postagensService.criar({
+      titulo,
+      slug,
+      descricao,
+      conteudo,
+      categoria,
+    });
 
-    if (erros.length > 0) {
+    if (resultado.erros) {
       const categorias = await Categoria.find().lean();
-      return res.render("admin/addpostagens", { erros, categorias });
-    }
-    const slugExiste = await Postagem.findOne({ slug });
-    if (slugExiste) {
-      const categorias = await Categoria.find().lean();
-      erros.push({ texto: "Já existe uma postagem com esse slug" });
-      return res.render("admin/addpostagens", { erros, categorias });
+      return res.render("admin/addpostagens", {
+        erros: resultado.erros,
+        categorias,
+      });
     }
 
-    await new Postagem({ titulo, slug, descricao, conteudo, categoria }).save();
     req.flash("success_msg", "Postagem criada com sucesso!");
     res.redirect("/admin/postagens");
   } catch (err) {
@@ -74,9 +69,7 @@ export const formEditarPostagem = async (req, res) => {
       return res.redirect("/admin/postagens");
     }
 
-    const postagem = await Postagem.findOne({ _id: req.params.id })
-      .populate("categoria")
-      .lean();
+    const postagem = await postagensService.buscarPorId(req.params.id);
     const categorias = await Categoria.find().lean();
     res.render("admin/editpostagens", { postagem, categorias });
   } catch (err) {
@@ -94,37 +87,23 @@ export const editarPostagem = async (req, res) => {
     const conteudo = req.body.conteudo?.trim();
     const categoria = req.body.categoria;
 
-    let erros = [];
-    if (!titulo) erros.push({ texto: "Titulo Inválido" });
-    if (!slug) erros.push({ texto: "Slug Inválido" });
-    if (!descricao) erros.push({ texto: "Descrição Inválida" });
-    if (!conteudo) erros.push({ texto: "Conteudo Inválido" });
+    const resultado = await postagensService.atualizar(id, {
+      titulo,
+      slug,
+      descricao,
+      conteudo,
+      categoria,
+    });
 
-    if (erros.length > 0) {
+    if (resultado.erros) {
       const categorias = await Categoria.find().lean();
-
       return res.render("admin/editpostagens", {
-        erros,
+        erros: resultado.erros,
         postagem: { _id: id, titulo, slug, descricao, conteudo, categoria },
         categorias,
       });
     }
 
-    const slugExiste = await Postagem.findOne({ slug, _id: { $ne: id } });
-    if (slugExiste) {
-      const categorias = await Categoria.find().lean();
-      erros.push({ texto: "Já existe uma postagem com esse slug" });
-      return res.render("admin/editpostagens", {
-        erros,
-        postagem: { _id: id, titulo, slug, descricao, conteudo, categoria },
-        categorias,
-      });
-    }
-
-    await Postagem.findOneAndUpdate(
-      { _id: id },
-      { titulo, slug, descricao, conteudo, categoria },
-    );
     req.flash("success_msg", "Postagem editada com sucesso!");
     res.redirect("/admin/postagens");
   } catch (err) {
@@ -144,7 +123,7 @@ export const deletarPostagem = async (req, res) => {
       return res.redirect("/admin/postagens");
     }
 
-    await Postagem.deleteOne({ _id: req.params.id });
+    await postagensService.deletar(req.params.id);
     req.flash("success_msg", "Postagem deleta com sucesso!");
     res.redirect("/admin/postagens");
   } catch (err) {
@@ -159,9 +138,7 @@ export const deletarPostagem = async (req, res) => {
 
 export const buscarPostagem = async (req, res) => {
   try {
-    const postagem = await Postagem.findOne({ slug: req.params.slug })
-      .populate("categoria")
-      .lean();
+    const postagem = await postagensService.buscarPorSlug(req.params.slug);
 
     if (!postagem) {
       req.flash("error_msg", "Esta postagem não existe");
@@ -184,26 +161,14 @@ export const buscarPostagem = async (req, res) => {
 
 export const likePostagem = async (req, res) => {
   try {
-    const postagem = await Postagem.findOne({ slug: req.params.slug });
+    const postagem = await postagensService.alternarLike(
+      req.params.slug,
+      req.user._id,
+    );
 
     if (!postagem) {
       req.flash("error_msg", "Postagem não encontrada.");
       return res.redirect("/");
-    }
-
-    const usuarioId = req.user._id;
-    const jaLikeu = postagem.likes.includes(usuarioId);
-
-    if (jaLikeu) {
-      // remove o like da postagem
-      await Postagem.findByIdAndUpdate(postagem._id, {
-        $pull: { likes: usuarioId },
-      });
-    } else {
-      // adiciona o like na postagem
-      await Postagem.findByIdAndUpdate(postagem._id, {
-        $push: { likes: usuarioId },
-      });
     }
 
     res.redirect(`/postagens/${req.params.slug}`);
